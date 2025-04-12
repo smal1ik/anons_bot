@@ -16,7 +16,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     tg_id = mapped_column(BigInteger)
     first_name: Mapped[str] = mapped_column()
-    username: Mapped[str] = mapped_column(nullable=True)
+    username: Mapped[str] = mapped_column()
     full_name: Mapped[str] = mapped_column()
     participant = mapped_column(Boolean, default=False)
     is_active = mapped_column(Boolean, default=True)
@@ -39,14 +39,4 @@ class Anons(Base):
     datetime_end = mapped_column(DateTime)
     start_msg: Mapped[str] = mapped_column()
     end_msg: Mapped[str] = mapped_column()
-    start_image: Mapped[str] = mapped_column(default="", nullable=True)
-    end_image: Mapped[str] = mapped_column(default="", nullable=True)
     is_finished = mapped_column(Boolean, default=False)
-
-
-class News(Base):
-    __tablename__ = 'news'
-    id: Mapped[int] = mapped_column(primary_key=True)
-    datetime_start = mapped_column(DateTime)
-    msg: Mapped[str] = mapped_column()
-    image: Mapped[str] = mapped_column(default="", nullable=True)

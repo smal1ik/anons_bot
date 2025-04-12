@@ -20,14 +20,6 @@ def get_edit_anons_msg(anons):
 {anons.end_msg}"""
     return msg
 
-
-def get_edit_news_msg(news):
-    msg = f"""Дата начала: {news.datetime_start.strftime("%d.%m.%y %H:%M")}
-
-Текст рассылки:
-{news.msg}"""
-    return msg
-
 def get_sub_msg(date: datetime):
     day = date.day
     month = get_month_name_ru(date.month)
@@ -45,7 +37,7 @@ def get_end_anons_msg(winners, msg):
             winners_check.append("@" + winner.username)
         else:
             winners_check.append(winner.full_name)
-    winners_text = f"{winners_check[0]}\n{winners_check[1]}\n{winners_check[2]}"
+    winners_text = f"1. {winners_check[0]}\n2. {winners_check[1]}\n3. {winners_check[2]}"
     msg = msg.replace('!WINNERS', winners_text)
     return msg
 
