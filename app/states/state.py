@@ -1,0 +1,9 @@
+from aiogram.fsm.state import StatesGroup, State
+
+class Admin(StatesGroup):
+    START = State()
+    EDIT = State()
+    ADD_START_DATETIME = State()
+    ADD_END_DATETIME = State()
+    ADD_START_MSG = State()
+    ADD_END_MSG = State()
