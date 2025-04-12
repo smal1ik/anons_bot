@@ -57,7 +57,3 @@ class workersettings:
     cron_jobs = [
         cron(check_anons, minute={0, 30})
     ]
-
-ctx = {}
-ctx['bot'] = Bot(token=env_config('BOT_TOKEN'))
-asyncio.run(check_anons(ctx))
