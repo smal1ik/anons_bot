@@ -37,7 +37,7 @@ def get_end_anons_msg(winners, msg):
             winners_check.append("@" + winner.username)
         else:
             winners_check.append(winner.full_name)
-    winners_text = f"1. {winners_check[0]}\n2. {winners_check[1]}\n3. {winners_check[2]}"
+    winners_text = f"{winners_check[0]}\n{winners_check[1]}\n{winners_check[2]}"
     msg = msg.replace('!WINNERS', winners_text)
     return msg
 
