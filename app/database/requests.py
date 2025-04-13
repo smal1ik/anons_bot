@@ -32,12 +32,15 @@ async def get_user(tg_id: BigInteger):
         return result
 
 
-async def get_all_user():
+async def get_all_user(participant=False):
     """
     Получаем всех пользователей
     """
     async with async_session() as session:
-        result = await session.scalars(select(User.tg_id).where(User.is_active == True, User.participant == True))
+        if participant:
+            result = await session.scalars(select(User.tg_id).where(User.is_active == True, User.participant == True))
+        else:
+            result = await session.scalars(select(User.tg_id).where(User.is_active == True))
         return result.fetchall()
 
 

@@ -33,7 +33,7 @@ async def check_anons(ctx):
                 inactive_user.add(tg_id)
 
     if end_anons:
-        tg_ids = await get_all_user()
+        tg_ids = await get_all_user(participant=True)
         winners = await get_winners_anons()
         count_participant = await get_count_participant()
         await add_result(end_anons.datetime_end, winners, count_participant)
@@ -55,5 +55,5 @@ class workersettings:
     on_shutdown = shutdown
     allow_abort_jobs = True
     cron_jobs = [
-        cron(check_anons, minute={0, 30})
+        cron(check_anons, minute={i for i in range(0, 59)})
     ]
