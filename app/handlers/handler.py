@@ -25,7 +25,7 @@ async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, comma
         if not user:
             await add_user(message.from_user.id, message.from_user.first_name, message.from_user.username,
                            message.from_user.full_name)
-            anons = await get_actual_anons()
+            anons = await get_actual_anons(for_user=True)
             if anons:
                 await message.answer(text=anons.start_msg, parse_mode="HTML", disable_web_page_preview=True, reply_markup=kb.get_check_sub_btn(anons.id))
 

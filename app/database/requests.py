@@ -90,11 +90,13 @@ async def get_actual_anons(for_user=False):
     async with async_session() as session:
         if not for_user:
             result = await session.scalars(select(Anons).where(Anons.datetime_end > today).order_by(Anons.datetime_start))
+            return result.fetchall()
         else:
-            result = await session.scalars(
+            result = await session.scalar(
                 select(Anons).where(Anons.datetime_end > today, Anons.datetime_start < today).order_by(Anons.datetime_start)
             )
-    return result.fetchall()
+            return result
+
 
 
 async def get_anons(anons_id):
