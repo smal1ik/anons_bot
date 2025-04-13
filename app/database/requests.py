@@ -142,7 +142,7 @@ async def remove_anons(anons_id):
 
 async def get_start_anons():
     now = datetime.datetime.now()
-    time_threshold = now - datetime.timedelta(minutes=15)
+    time_threshold = now - datetime.timedelta(minutes=1)
     async with async_session() as session:
         result = await session.scalar(
             select(Anons).where(Anons.datetime_start <= now, Anons.datetime_start >= time_threshold))
@@ -151,7 +151,7 @@ async def get_start_anons():
 
 async def get_end_anons():
     now = datetime.datetime.now()
-    time_threshold = now - datetime.timedelta(minutes=15)
+    time_threshold = now - datetime.timedelta(minutes=1)
     async with async_session() as session:
         result = await session.scalar(
             select(Anons).where(Anons.datetime_end <= now, Anons.datetime_end >= time_threshold))
