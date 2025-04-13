@@ -28,7 +28,7 @@ async def check_anons(ctx):
         for tg_id in tg_ids:
             try:
                 await ctx['bot'].send_message(tg_id, text=start_anons.start_msg, parse_mode="HTML", disable_web_page_preview=True, reply_markup=kb.get_check_sub_btn(start_anons.id))
-                await asyncio.sleep(0.03)
+                await asyncio.sleep(0.05)
             except:
                 inactive_user.add(tg_id)
 
