@@ -37,7 +37,7 @@ async def get_all_user():
     Получаем всех пользователей
     """
     async with async_session() as session:
-        result = await session.scalars(select(User.tg_id).where(User.is_active == True))
+        result = await session.scalars(select(User.tg_id).where(User.is_active == True, User.participant == True))
         return result.fetchall()
 
 

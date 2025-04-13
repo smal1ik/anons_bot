@@ -53,12 +53,38 @@ def get_edit_anons_btn(anons_id):
     btn = btn.as_markup()
     return btn
 
+def get_confirmation_btn(anons_id):
+    btn = InlineKeyboardBuilder()
+    btn.row(
+        types.InlineKeyboardButton(
+            text="Да, я хочу удалить розыгрыш",
+            callback_data=f"confirmation_yes_{anons_id}")
+    )
+    btn.row(
+        types.InlineKeyboardButton(
+            text="Нет",
+            callback_data=f"confirmation_no_{anons_id}")
+    )
+    btn = btn.as_markup()
+    return btn
+
 
 def get_check_sub_btn(anons_id):
     btn = InlineKeyboardBuilder()
     btn.row(
         types.InlineKeyboardButton(
             text="Учавствовать",
+            callback_data=f"check_sub_{anons_id}")
+    )
+    btn = btn.as_markup()
+    return btn
+
+
+def get_check_sub_btn_for_unsub(anons_id):
+    btn = InlineKeyboardBuilder()
+    btn.row(
+        types.InlineKeyboardButton(
+            text="Проверить подписку",
             callback_data=f"check_sub_{anons_id}")
     )
     btn = btn.as_markup()

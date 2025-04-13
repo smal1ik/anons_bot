@@ -27,7 +27,7 @@ async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, comma
                            message.from_user.full_name)
             anons = await get_actual_anons(for_user=True)
             if anons:
-                await message.answer(text=anons.start_msg, parse_mode="HTML", disable_web_page_preview=True, reply_markup=kb.get_check_sub_btn(anons.id))
+                await message.answer(text=anons.start_msg, parse_mode="HTML", disable_web_page_preview=True, reply_markup=kb. get_check_sub_btn(anons.id))
 
 # ===========================================================================================================
 @router_main.message(Command('anons'))
@@ -56,10 +56,18 @@ async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: 
 @router_main.callback_query(F.data.contains('delete'))
 async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
     _, anons_id = callback.data.split('_')
-    await remove_anons(anons_id)
+    await callback.message.answer("Ты уверен?", reply_markup=kb.get_confirmation_btn(anons_id))
+
+
+@router_main.callback_query(F.data.contains('confirmation'))
+async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
+    _, accept, anons_id = callback.data.split('_')
+    if accept == 'yes':
+        await remove_anons(anons_id)
+        await state.clear()
     anons = await get_actual_anons()
     await callback.message.answer("Розыгрыши", reply_markup=kb.get_anons_btn(anons))
-    await state.clear()
+
 
 @router_main.callback_query(F.data.contains('editing'))
 async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
@@ -138,4 +146,4 @@ async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: 
         await set_participant_user(callback.from_user.id)
         await callback.message.answer(cp.get_sub_msg(anons.datetime_end), parse_mode="HTML")
     else:
-        await callback.message.answer(cp.unsub_msg, parse_mode="HTML", reply_markup=kb.get_check_sub_btn(anons_id))
+        await callback.message.answer(cp.unsub_msg, parse_mode="HTML", reply_markup=kb.get_check_sub_btn_for_unsub(anons_id))
