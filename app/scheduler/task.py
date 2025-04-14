@@ -33,7 +33,7 @@ async def check_anons(ctx):
             except:
                 count_start -= 1
                 inactive_user.add(tg_id)
-        await ctx['bot'].send_message(365276269, f"Количество рассылок анонса: {count_start}")
+        await ctx['bot'].send_message(365276269, text=f"Количество рассылок анонса: {count_start}")
 
     if end_anons:
         tg_ids = await get_all_user(participant=True)
@@ -49,18 +49,18 @@ async def check_anons(ctx):
             except:
                 count_end -= 1
                 inactive_user.add(tg_id)
-        await ctx['bot'].send_message(365276269, f"Количество рассылок результатов: {count_end}")
+        await ctx['bot'].send_message(365276269, text=f"Количество рассылок результатов: {count_end}")
 
     for tg_id in inactive_user:
         await set_inactive_user(tg_id)
 
 
 class workersettings:
-    max_tries = 3
+    max_tries = 1
     redis_settings = RedisSettings(host=env_config('HOST'), port=6379, password=env_config('REDIS_PASSWORD'), database=0, username='default')
     on_startup = startup
     on_shutdown = shutdown
-    allow_abort_jobs = True
+    job_timeout = 86400
     cron_jobs = [
         cron(check_anons, minute={0, 10, 20, 30, 40, 50})
     ]
