@@ -11,7 +11,7 @@ from decouple import config
 import app.utils.copy as cp
 import app.keyboards.keyboard as kb
 from app.database.requests import get_user, add_user, get_actual_anons, get_anons, edit_anons, remove_anons, new_anons, \
-    set_participant_user
+    set_participant_user, update_active
 from app.states.state import Admin
 
 router_main = Router()
@@ -28,6 +28,8 @@ async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, comma
             anons = await get_actual_anons(for_user=True)
             if anons:
                 await message.answer(text=anons.start_msg, parse_mode="HTML", disable_web_page_preview=True, reply_markup=kb. get_check_sub_btn(anons.id))
+        elif not user.is_active:
+            await update_active(user.tg_id)
 
 # ===========================================================================================================
 @router_main.message(Command('anons'))

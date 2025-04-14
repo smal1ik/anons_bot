@@ -22,6 +22,11 @@ async def add_user(tg_id: BigInteger, first_name: str, username: str, full_name:
             full_name=full_name))
         await session.commit()
 
+async def update_active(tg_id: BigInteger):
+    async with async_session() as session:
+        await session.execute(update(User).where(User.tg_id == tg_id).values(is_active=True))
+        await session.commit()
+
 
 async def get_user(tg_id: BigInteger):
     """
@@ -142,7 +147,7 @@ async def remove_anons(anons_id):
 
 async def get_start_anons():
     now = datetime.datetime.now()
-    time_threshold = now - datetime.timedelta(minutes=5)
+    time_threshold = now - datetime.timedelta(minutes=2)
     async with async_session() as session:
         result = await session.scalar(
             select(Anons).where(Anons.datetime_start <= now, Anons.datetime_start >= time_threshold))
@@ -151,7 +156,7 @@ async def get_start_anons():
 
 async def get_end_anons():
     now = datetime.datetime.now()
-    time_threshold = now - datetime.timedelta(minutes=5)
+    time_threshold = now - datetime.timedelta(minutes=2)
     async with async_session() as session:
         result = await session.scalar(
             select(Anons).where(Anons.datetime_end <= now, Anons.datetime_end >= time_threshold))

@@ -55,5 +55,5 @@ class workersettings:
     on_shutdown = shutdown
     allow_abort_jobs = True
     cron_jobs = [
-        cron(check_anons, minute={i for i in range(0, 59)})
+        cron(check_anons, minute={0, 10, 20, 30, 40, 50})
     ]
