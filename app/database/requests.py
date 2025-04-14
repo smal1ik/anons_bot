@@ -22,6 +22,11 @@ async def add_user(tg_id: BigInteger, first_name: str, username: str, full_name:
             full_name=full_name))
         await session.commit()
 
+async def update_active(tg_id: BigInteger):
+    async with async_session() as session:
+        await session.execute(update(User).where(User.tg_id == tg_id).values(is_active=True))
+        await session.commit()
+
 
 async def get_user(tg_id: BigInteger):
     """
@@ -32,12 +37,15 @@ async def get_user(tg_id: BigInteger):
         return result
 
 
-async def get_all_user():
+async def get_all_user(participant=False):
     """
     Получаем всех пользователей
     """
     async with async_session() as session:
-        result = await session.scalars(select(User.tg_id).where(User.is_active == True))
+        if participant:
+            result = await session.scalars(select(User.tg_id).where(User.is_active == True, User.participant == True))
+        else:
+            result = await session.scalars(select(User.tg_id).where(User.is_active == True))
         return result.fetchall()
 
 
@@ -85,11 +93,18 @@ async def reset_participant_all():
         await session.commit()
 
 
-async def get_actual_anons():
+async def get_actual_anons(for_user=False):
     today = datetime.datetime.now()
     async with async_session() as session:
-        result = await session.scalars(select(Anons).where(Anons.datetime_end > today).order_by(Anons.datetime_start))
-    return result.fetchall()
+        if not for_user:
+            result = await session.scalars(select(Anons).where(Anons.datetime_end > today).order_by(Anons.datetime_start))
+            return result.fetchall()
+        else:
+            result = await session.scalar(
+                select(Anons).where(Anons.datetime_end > today, Anons.datetime_start < today).order_by(Anons.datetime_start)
+            )
+            return result
+
 
 
 async def get_anons(anons_id):
@@ -132,7 +147,7 @@ async def remove_anons(anons_id):
 
 async def get_start_anons():
     now = datetime.datetime.now()
-    time_threshold = now - datetime.timedelta(minutes=25)
+    time_threshold = now - datetime.timedelta(minutes=2)
     async with async_session() as session:
         result = await session.scalar(
             select(Anons).where(Anons.datetime_start <= now, Anons.datetime_start >= time_threshold))
@@ -141,7 +156,7 @@ async def get_start_anons():
 
 async def get_end_anons():
     now = datetime.datetime.now()
-    time_threshold = now - datetime.timedelta(minutes=15)
+    time_threshold = now - datetime.timedelta(minutes=2)
     async with async_session() as session:
         result = await session.scalar(
             select(Anons).where(Anons.datetime_end <= now, Anons.datetime_end >= time_threshold))

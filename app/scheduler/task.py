@@ -28,12 +28,12 @@ async def check_anons(ctx):
         for tg_id in tg_ids:
             try:
                 await ctx['bot'].send_message(tg_id, text=start_anons.start_msg, parse_mode="HTML", disable_web_page_preview=True, reply_markup=kb.get_check_sub_btn(start_anons.id))
-                await asyncio.sleep(0.03)
+                await asyncio.sleep(0.05)
             except:
                 inactive_user.add(tg_id)
 
     if end_anons:
-        tg_ids = await get_all_user()
+        tg_ids = await get_all_user(participant=True)
         winners = await get_winners_anons()
         count_participant = await get_count_participant()
         await add_result(end_anons.datetime_end, winners, count_participant)
@@ -55,9 +55,5 @@ class workersettings:
     on_shutdown = shutdown
     allow_abort_jobs = True
     cron_jobs = [
-        cron(check_anons, minute={0, 30})
+        cron(check_anons, minute={0, 10, 20, 30, 40, 50})
     ]
-
-ctx = {}
-ctx['bot'] = Bot(token=env_config('BOT_TOKEN'))
-asyncio.run(check_anons(ctx))

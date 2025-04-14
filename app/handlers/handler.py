@@ -11,7 +11,7 @@ from decouple import config
 import app.utils.copy as cp
 import app.keyboards.keyboard as kb
 from app.database.requests import get_user, add_user, get_actual_anons, get_anons, edit_anons, remove_anons, new_anons, \
-    set_participant_user
+    set_participant_user, update_active
 from app.states.state import Admin
 
 router_main = Router()
@@ -21,9 +21,15 @@ CHANNEL_ID = int(config('CHANNEL_ID'))
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
     if message.from_user.id == message.chat.id:
         user = await get_user(message.from_user.id)
-        if not user:
-            await add_user(message.from_user.id, message.from_user.first_name, message.from_user.username, message.from_user.full_name)
         await message.answer_photo(caption=cp.start_msg, photo=FSInputFile('imgs/start_img.png'), parse_mode='HTML')
+        if not user:
+            await add_user(message.from_user.id, message.from_user.first_name, message.from_user.username,
+                           message.from_user.full_name)
+            anons = await get_actual_anons(for_user=True)
+            if anons:
+                await message.answer(text=anons.start_msg, parse_mode="HTML", disable_web_page_preview=True, reply_markup=kb. get_check_sub_btn(anons.id))
+        elif not user.is_active:
+            await update_active(user.tg_id)
 
 # ===========================================================================================================
 @router_main.message(Command('anons'))
@@ -52,10 +58,18 @@ async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: 
 @router_main.callback_query(F.data.contains('delete'))
 async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
     _, anons_id = callback.data.split('_')
-    await remove_anons(anons_id)
+    await callback.message.answer("Ты уверен?", reply_markup=kb.get_confirmation_btn(anons_id))
+
+
+@router_main.callback_query(F.data.contains('confirmation'))
+async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
+    _, accept, anons_id = callback.data.split('_')
+    if accept == 'yes':
+        await remove_anons(anons_id)
+        await state.clear()
     anons = await get_actual_anons()
     await callback.message.answer("Розыгрыши", reply_markup=kb.get_anons_btn(anons))
-    await state.clear()
+
 
 @router_main.callback_query(F.data.contains('editing'))
 async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
@@ -134,4 +148,4 @@ async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: 
         await set_participant_user(callback.from_user.id)
         await callback.message.answer(cp.get_sub_msg(anons.datetime_end), parse_mode="HTML")
     else:
-        await callback.message.answer(cp.unsub_msg, parse_mode="HTML", reply_markup=kb.get_check_sub_btn(anons_id))
+        await callback.message.answer(cp.unsub_msg, parse_mode="HTML", reply_markup=kb.get_check_sub_btn_for_unsub(anons_id))
