@@ -17,6 +17,8 @@ from app.states.state import Admin
 router_main = Router()
 CHANNEL_ID = int(config('CHANNEL_ID'))
 
+ADMINS_ID = [654557598, 365276269]
+
 @router_main.message(Command('start'))
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
     if message.from_user.id == message.chat.id:
@@ -34,16 +36,18 @@ async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, comma
 # ===========================================================================================================
 @router_main.message(Command('anons'))
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
-    anons = await get_actual_anons()
-    await message.answer("Розыгрыши", reply_markup=kb.get_anons_btn(anons))
-    await state.clear()
+    if message.from_user.id in ADMINS_ID:
+        anons = await get_actual_anons()
+        await message.answer("Розыгрыши", reply_markup=kb.get_anons_btn(anons))
+        await state.clear()
 
 
 @router_main.callback_query(F.data == 'anons')
 async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
-    anons = await get_actual_anons()
-    await callback.message.answer("Розыгрыши", reply_markup=kb.get_anons_btn(anons))
-    await state.clear()
+    if message.from_user.id in ADMINS_ID:
+        anons = await get_actual_anons()
+        await callback.message.answer("Розыгрыши", reply_markup=kb.get_anons_btn(anons))
+        await state.clear()
 # ===========================================================================================================
 
 
