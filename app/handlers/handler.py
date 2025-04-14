@@ -44,7 +44,7 @@ async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, comma
 
 @router_main.callback_query(F.data == 'anons')
 async def answer_message(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
-    if message.from_user.id in ADMINS_ID:
+    if callback.from_user.id in ADMINS_ID:
         anons = await get_actual_anons()
         await callback.message.answer("Розыгрыши", reply_markup=kb.get_anons_btn(anons))
         await state.clear()
