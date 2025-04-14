@@ -25,15 +25,19 @@ async def check_anons(ctx):
     end_anons = await get_end_anons()
     if start_anons:
         tg_ids = await get_all_user()
+        count_start = len(tg_ids)
         for tg_id in tg_ids:
             try:
                 await ctx['bot'].send_message(tg_id, text=start_anons.start_msg, parse_mode="HTML", disable_web_page_preview=True, reply_markup=kb.get_check_sub_btn(start_anons.id))
                 await asyncio.sleep(0.05)
             except:
+                count_start -= 1
                 inactive_user.add(tg_id)
+        await ctx['bot'].send_message(365276269, f"Количество рассылок анонса: {count_start}")
 
     if end_anons:
         tg_ids = await get_all_user(participant=True)
+        count_end = len(tg_ids)
         winners = await get_winners_anons()
         count_participant = await get_count_participant()
         await add_result(end_anons.datetime_end, winners, count_participant)
@@ -41,12 +45,15 @@ async def check_anons(ctx):
         for tg_id in tg_ids:
             try:
                 await ctx['bot'].send_message(tg_id, text=cp.get_end_anons_msg(winners, end_anons.end_msg), parse_mode="HTML", disable_web_page_preview=True)
-                await asyncio.sleep(0.03)
+                await asyncio.sleep(0.05)
             except:
+                count_end -= 1
                 inactive_user.add(tg_id)
+        await ctx['bot'].send_message(365276269, f"Количество рассылок результатов: {count_end}")
 
     for tg_id in inactive_user:
         await set_inactive_user(tg_id)
+
 
 class workersettings:
     max_tries = 3
