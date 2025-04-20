@@ -42,6 +42,16 @@ def get_edit_anons_btn(anons_id):
     )
     btn.row(
         types.InlineKeyboardButton(
+            text="Изменить картинку рассылки",
+            callback_data=f"editing_start_image_{anons_id}")
+    )
+    btn.row(
+        types.InlineKeyboardButton(
+            text="Изменить картинку подведения итогов",
+            callback_data=f"editing_end_image_{anons_id}")
+    )
+    btn.row(
+        types.InlineKeyboardButton(
             text="Удалить розыгрыш",
             callback_data=f"delete_{anons_id}")
     )

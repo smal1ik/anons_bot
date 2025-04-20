@@ -113,13 +113,15 @@ async def get_anons(anons_id):
     return result
 
 
-async def new_anons(datetime_start, datetime_end, start_msg, end_msg):
+async def new_anons(datetime_start, datetime_end, start_msg, end_msg, start_image, end_image):
     async with async_session() as session:
         session.add(Anons(
             datetime_start=datetime_start,
             datetime_end=datetime_end,
             start_msg=start_msg,
-            end_msg=end_msg))
+            end_msg=end_msg,
+            start_image=start_image,
+            end_image=end_image))
         await session.commit()
 
 
@@ -130,12 +132,17 @@ async def edit_anons(anons_id, type_edit, time_edit, new_data):
                 await session.execute(update(Anons).where(Anons.id == int(anons_id)).values(start_msg=new_data))
             else:
                 await session.execute(update(Anons).where(Anons.id == int(anons_id)).values(end_msg=new_data))
-        else:
+        elif type_edit == 'datetime':
             new_data = datetime.datetime.strptime(new_data, "%d.%m.%y %H:%M")
             if time_edit == 'start':
                 await session.execute(update(Anons).where(Anons.id == int(anons_id)).values(datetime_start=new_data))
             else:
                 await session.execute(update(Anons).where(Anons.id == int(anons_id)).values(datetime_end=new_data))
+        elif type_edit == 'image':
+            if time_edit == 'start':
+                await session.execute(update(Anons).where(Anons.id == int(anons_id)).values(start_image=new_data))
+            else:
+                await session.execute(update(Anons).where(Anons.id == int(anons_id)).values(end_image=new_data))
         await session.commit()
 
 
@@ -161,3 +168,11 @@ async def get_end_anons():
         result = await session.scalar(
             select(Anons).where(Anons.datetime_end <= now, Anons.datetime_end >= time_threshold))
     return result
+
+async def get_stats():
+    results = []
+    async with async_session() as session:
+        results.append((await session.execute(func.count(User.id))).scalar())
+        results.append((await session.execute(select(func.count()).where(User.participant == True))).scalar())
+
+    return results

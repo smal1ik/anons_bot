@@ -6,4 +6,6 @@ class Admin(StatesGroup):
     ADD_START_DATETIME = State()
     ADD_END_DATETIME = State()
     ADD_START_MSG = State()
+    ADD_START_IMAGE = State()
+    ADD_END_IMAGE = State()
     ADD_END_MSG = State()
