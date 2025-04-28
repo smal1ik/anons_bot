@@ -57,8 +57,7 @@ async def check_anons(ctx):
         tg_ids = await get_all_user(participant=True)
         count_end = len(tg_ids)
         winners = await get_winners_anons()
-        count_participant = await get_count_participant()
-        await add_result(end_anons.datetime_end, winners, count_participant)
+        await add_result(end_anons.datetime_end, winners, len(tg_ids))
         await reset_participant_all()
         if end_anons.end_image:
             for tg_id in tg_ids:

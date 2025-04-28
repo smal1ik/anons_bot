@@ -83,7 +83,7 @@ def get_check_sub_btn(anons_id):
     btn = InlineKeyboardBuilder()
     btn.row(
         types.InlineKeyboardButton(
-            text="Учавствовать",
+            text="Участвовать",
             callback_data=f"check_sub_{anons_id}")
     )
     btn = btn.as_markup()
