@@ -20,6 +20,14 @@ def get_edit_anons_msg(anons):
 {anons.end_msg}"""
     return msg
 
+
+def get_edit_news_msg(news):
+    msg = f"""Дата начала: {news.datetime_start.strftime("%d.%m.%y %H:%M")}
+
+Текст рассылки:
+{news.msg}"""
+    return msg
+
 def get_sub_msg(date: datetime):
     day = date.day
     month = get_month_name_ru(date.month)

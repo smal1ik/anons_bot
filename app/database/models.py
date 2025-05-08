@@ -42,3 +42,11 @@ class Anons(Base):
     start_image: Mapped[str] = mapped_column(default="", nullable=True)
     end_image: Mapped[str] = mapped_column(default="", nullable=True)
     is_finished = mapped_column(Boolean, default=False)
+
+
+class News(Base):
+    __tablename__ = 'news'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    datetime_start = mapped_column(DateTime)
+    msg: Mapped[str] = mapped_column()
+    image: Mapped[str] = mapped_column(default="", nullable=True)

@@ -1,6 +1,6 @@
 import datetime
 
-from app.database.models import User, async_session, Anons, Result
+from app.database.models import User, async_session, Anons, Result, News
 from sqlalchemy import select, BigInteger, update, delete, func, case
 
 
@@ -105,11 +105,22 @@ async def get_actual_anons(for_user=False):
             )
             return result
 
+async def get_actual_news():
+    today = datetime.datetime.now()
+    async with async_session() as session:
+        result = await session.scalars(select(News).where(News.datetime_start >= today).order_by(News.datetime_start))
+        return result.fetchall()
+
 
 
 async def get_anons(anons_id):
     async with async_session() as session:
         result = await session.scalar(select(Anons).where(Anons.id == int(anons_id)))
+    return result
+
+async def get_news(news_id):
+    async with async_session() as session:
+        result = await session.scalar(select(News).where(News.id == int(news_id)))
     return result
 
 
@@ -122,6 +133,15 @@ async def new_anons(datetime_start, datetime_end, start_msg, end_msg, start_imag
             end_msg=end_msg,
             start_image=start_image,
             end_image=end_image))
+        await session.commit()
+
+
+async def new_news(datetime_start, msg, image):
+    async with async_session() as session:
+        session.add(News(
+            datetime_start=datetime_start,
+            msg=msg,
+            image=image))
         await session.commit()
 
 
@@ -146,9 +166,26 @@ async def edit_anons(anons_id, type_edit, time_edit, new_data):
         await session.commit()
 
 
+async def edit_news(news_id, type_edit, new_data):
+    async with async_session() as session:
+        if type_edit == 'msg':
+            await session.execute(update(News).where(News.id == int(news_id)).values(msg=new_data))
+        elif type_edit == 'datetime':
+            new_data = datetime.datetime.strptime(new_data, "%d.%m.%y %H:%M")
+            await session.execute(update(News).where(News.id == int(news_id)).values(datetime_start=new_data))
+        elif type_edit == 'image':
+            await session.execute(update(News).where(News.id == int(news_id)).values(image=new_data))
+        await session.commit()
+
+
 async def remove_anons(anons_id):
     async with async_session() as session:
         await session.execute(delete(Anons).where(Anons.id == int(anons_id)))
+        await session.commit()
+
+async def remove_news(news_id):
+    async with async_session() as session:
+        await session.execute(delete(News).where(News.id == int(news_id)))
         await session.commit()
 
 
@@ -158,6 +195,14 @@ async def get_start_anons():
     async with async_session() as session:
         result = await session.scalar(
             select(Anons).where(Anons.datetime_start <= now, Anons.datetime_start >= time_threshold))
+    return result
+
+async def get_start_news():
+    now = datetime.datetime.now()
+    time_threshold = now - datetime.timedelta(minutes=2)
+    async with async_session() as session:
+        result = await session.scalar(
+            select(News).where(News.datetime_start <= now, News.datetime_start >= time_threshold))
     return result
 
 

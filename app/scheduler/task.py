@@ -6,7 +6,7 @@ from arq.connections import RedisSettings, ArqRedis
 from decouple import config as env_config
 
 from app.database.requests import get_start_anons, get_all_user, get_end_anons, set_inactive_user, \
-    reset_participant_all, get_winners_anons, add_result, get_count_participant
+    reset_participant_all, get_winners_anons, add_result, get_count_participant, get_start_news
 
 import app.keyboards.keyboard as kb
 import app.utils.copy as cp
@@ -87,6 +87,39 @@ async def check_anons(ctx):
         await set_inactive_user(tg_id)
 
 
+async def check_news(ctx):
+    inactive_user = set()
+    start_news = await get_start_news()
+    if start_news:
+        tg_ids = await get_all_user()
+        count_start = len(tg_ids)
+        if start_news.image:
+            for tg_id in tg_ids:
+                try:
+                    await ctx['bot'].send_photo(chat_id=tg_id,
+                                                caption=start_news.msg,
+                                                parse_mode="HTML",
+                                                photo=start_news.image)
+                    await asyncio.sleep(0.05)
+                except:
+                    count_start -= 1
+                    inactive_user.add(tg_id)
+        else:
+            for tg_id in tg_ids:
+                try:
+                    await ctx['bot'].send_message(chat_id=tg_id,
+                                                  text=start_news.msg,
+                                                  parse_mode="HTML",
+                                                  disable_web_page_preview=True)
+                    await asyncio.sleep(0.05)
+                except:
+                    count_start -= 1
+                    inactive_user.add(tg_id)
+        await ctx['bot'].send_message(365276269, text=f"Количество рассылок: {count_start}")
+
+    for tg_id in inactive_user:
+        await set_inactive_user(tg_id)
+
 class workersettings:
     max_tries = 1
     redis_settings = RedisSettings(host=env_config('HOST'), port=6379, password=env_config('REDIS_PASSWORD'), database=0, username='default')
@@ -94,5 +127,6 @@ class workersettings:
     on_shutdown = shutdown
     job_timeout = 86400
     cron_jobs = [
-        cron(check_anons, minute={0, 10, 20, 30, 40, 50})
+        cron(check_anons, minute={0, 10, 20, 30, 40, 50}),
+        cron(check_news, minute={0, 10, 20, 30, 40, 50}),
     ]
