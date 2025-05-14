@@ -47,9 +47,12 @@ async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, comma
 @router_main.message(Admin.GET_ID)
 async def message(message: types.Message, bot: Bot, state: FSMContext):
     await state.clear()
-    if message.animation.file_id:
+    if message.animation and message.animation.file_id:
         await message.answer(message.animation.file_id)
         await message.answer_animation(message.animation.file_id)
+    elif message.document and message.document.file_id:
+        await message.answer(message.document.file_id)
+        await message.answer_animation(message.document.file_id)
 
 @router_main.message(Command('anons'))
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
