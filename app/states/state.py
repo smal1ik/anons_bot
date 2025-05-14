@@ -13,3 +13,4 @@ class Admin(StatesGroup):
     ADD_NEWS_START_IMAGE = State()
     ADD_END_IMAGE = State()
     ADD_END_MSG = State()
+    GET_ID = State()

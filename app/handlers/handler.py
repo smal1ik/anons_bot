@@ -37,6 +37,20 @@ async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, comma
 
 
 # ===========================================================================================================
+@router_main.message(Command('get_id'))
+async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
+    if message.from_user.id in ADMINS_ID:
+        await state.clear()
+        await message.answer("Загрузи гифку")
+        await state.set_state(Admin.GET_ID)
+
+@router_main.message(Admin.GET_ID)
+async def message(message: types.Message, bot: Bot, state: FSMContext):
+    await state.clear()
+    if message.animation.file_id:
+        await message.answer(message.animation.file_id)
+        await message.answer_animation(message.animation.file_id)
+
 @router_main.message(Command('anons'))
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
     if message.from_user.id in ADMINS_ID:
