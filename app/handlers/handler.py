@@ -17,7 +17,7 @@ from app.states.state import Admin
 router_main = Router()
 CHANNEL_ID = int(config('CHANNEL_ID'))
 
-ADMINS_ID = [654557598, 365276269, 1269975870]
+ADMINS_ID = [654557598, 365276269, 1269975870, 7927932978]
 
 
 @router_main.message(Command('start'))
