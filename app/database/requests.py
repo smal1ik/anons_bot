@@ -83,7 +83,7 @@ async def add_result(datetime_end, winners, participants):
 
 async def get_winners_anons():
     async with async_session() as session:
-        result = await session.scalars(select(User).where(User.participant == True & User.username != None).order_by(func.random()).limit(3))
+        result = await session.scalars(select(User).where(User.participant == True, User.username != None).order_by(func.random()).limit(3))
         return result.fetchall()
 
 
