@@ -11,13 +11,20 @@ from decouple import config
 import app.utils.copy as cp
 import app.keyboards.keyboard as kb
 from app.database.requests import get_user, add_user, get_actual_anons, get_anons, edit_anons, remove_anons, new_anons, \
-    set_participant_user, update_active, get_stats, get_actual_news, new_news, get_news, remove_news, edit_news
+    set_participant_user, update_active, get_stats, get_actual_news, new_news, get_news, remove_news, edit_news, \
+    get_winners_anons
 from app.states.state import Admin
 
 router_main = Router()
 CHANNEL_ID = int(config('CHANNEL_ID'))
 
 ADMINS_ID = [654557598, 365276269, 1269975870, 7927932978]
+
+@router_main.message(Command('test_winners'))
+async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
+    if message.from_user.id in ADMINS_ID:
+        winners = await get_winners_anons()
+        await message.answer(f"{winners[0]}\n{winners[1]}\n{winners[3]}")
 
 
 @router_main.message(Command('start'))
