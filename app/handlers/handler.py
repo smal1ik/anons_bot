@@ -24,7 +24,7 @@ ADMINS_ID = [654557598, 365276269, 1269975870, 7927932978]
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
     if message.from_user.id in ADMINS_ID:
         winners = await get_winners_anons()
-        await message.answer(f"{winners[0]}\n{winners[1]}\n{winners[3]}")
+        await message.answer(f"{winners[0]}\n{winners[1]}\n{winners[2]}")
 
 
 @router_main.message(Command('start'))
