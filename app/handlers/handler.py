@@ -48,7 +48,7 @@ async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, comma
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
     if message.from_user.id in ADMINS_ID:
         await state.clear()
-        await message.answer("Загрузи гифку")
+        await message.answer("Загрузи файл")
         await state.set_state(Admin.GET_ID)
 
 @router_main.message(Admin.GET_ID)
@@ -59,7 +59,10 @@ async def message(message: types.Message, bot: Bot, state: FSMContext):
         await message.answer_animation(message.animation.file_id)
     elif message.document and message.document.file_id:
         await message.answer(message.document.file_id)
-        await message.answer_animation(message.document.file_id)
+        await message.answer_document(message.document.file_id)
+    elif message.video and message.video.file_id:
+        await message.answer(message.video.file_id)
+        await message.answer_video(message.video.file_id)
 
 @router_main.message(Command('anons'))
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
