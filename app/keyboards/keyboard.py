@@ -2,6 +2,14 @@ from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
+channel_btn = InlineKeyboardBuilder()
+channel_btn.row(
+    types.InlineKeyboardButton(
+        text="Подписаться на канал",
+        url="https://t.me/sin_russia"
+    )
+)
+
 def get_anons_btn(anons):
     btn = InlineKeyboardBuilder()
     for elem in anons:

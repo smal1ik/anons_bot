@@ -21,7 +21,7 @@ CHANNEL_ID = int(config('CHANNEL_ID'))
 async def cmd_message(message: types.Message, state: FSMContext, bot: Bot, command: Command):
     if message.from_user.id == message.chat.id:
         user = await get_user(message.from_user.id)
-        await message.answer_photo(caption=cp.start_msg, photo=FSInputFile('imgs/start_img.png'), parse_mode='HTML')
+        await message.answer_photo(caption=cp.start_msg, photo=FSInputFile('imgs/start_img.png'), parse_mode='HTML', reply_markup=kb.channel_btn)
         if not user:
             await add_user(message.from_user.id, message.from_user.first_name, message.from_user.username,
                            message.from_user.full_name)
